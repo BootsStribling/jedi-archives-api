@@ -1,12 +1,14 @@
 import mongoose from 'mongoose'
 import bcrypt from 'bcrypt'
 const SALT_ROUNDS = 6
+const ObjRef = mongoose.Schema.Types.ObjectId
+const Schema = mongoose.Schema
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema({
   name: String,
   email: { type: String, required: true, lowercase: true, unique: true },
   password: String,
-  profile: {type: mongoose.Schema.Types.ObjectId, ref: "Profile"}
+  profile: {type: ObjRef, ref: "Profile"}
 }, {
   timestamps: true,
 })
