@@ -26,3 +26,5 @@ app.use(function (err, req, res, next) {
 })
 
 export { app }
+
+//remote rename test successful
