@@ -11,6 +11,6 @@ router.get('/', starshipsCtrl.index)
 
 /*---------- Protected Routes ----------*/
 router.use(decodeUserFromToken)
-router.post('/', checkAuth,starshipsCtrl.create)
+router.post('/', checkAuth, starshipsCtrl.create)
 
 export { router }
