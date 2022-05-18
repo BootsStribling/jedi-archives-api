@@ -7,6 +7,9 @@ const router = Router()
 
 /*---------- Public Routes ----------*/
 router.get('/', starshipsCtrl.index)
+router.get('/:id', starshipsCtrl.show)
+router.get('/?=', starshipsCtrl.findWithQuery)
+router.get('/?=:query', starshipCtrl.sort)
 
 
 /*---------- Protected Routes ----------*/
