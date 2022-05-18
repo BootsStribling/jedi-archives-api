@@ -38,13 +38,18 @@ function deleteMany(req,res){
   Starship.deleteMany(req.body)
   .then(casualties => res.json({casualties, msg: `We've destroyed the whole fleet! \n Lets's get out of here!`}))
   .catch(err => {
-    console.log(err, `Error deleting with ${req.params.query}`)
-    res.status(500).json({err, msg: `Err:Deletingwithquery \n These aren't the droids your looking for.`})
+    console.log(err, `Error deleting with ${req.body}`)
+    res.status(500).json({err, msg: `ERR:Deletingwithquery \n These aren't the droids your looking for.`})
   })
 }
 
 function sort(req,res){
-  Starship.find(req.body).sort({field: `${req.params.query}`})
+  Starship.find({}).sort({length: `${req.body.length}`})
+  .then(starships => res.json({starships, msg: `Is this how you wanted them ordered, sir?`}))
+  .catch(err => {
+    console.log(err, `Error sorting with query ${req.params.query}`)
+    res.status(500).json({err, msg:`ERR:Sort \n I can't seem to make out what you're asking me!`})
+  })
 }
 
 function create(req,res){
@@ -67,7 +72,7 @@ function update(req,res){
 
 function deleteShip(req,res){
   Starship.findByIdAndDelete(req.params.id)
-  .then(starship => res.status(200).json({msg: `Destroyed ${starship.name}. \n Watch your back.`}))
+  .then(starship => res.status(200).json({msg: `Destroyed the ${starship.name}. \n Watch your back.`}))
   .catch(err=> {
     console.log(err, 'Error deleting ship.')
     res.status(500).json({err, msg: `ERR:Deleting \n Those shields are too strong for blasters! \n Get your harpoons and tow-cables and come back on follow me on the next pass!`})

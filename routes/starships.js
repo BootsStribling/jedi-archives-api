@@ -7,16 +7,16 @@ const router = Router()
 
 /*---------- Public Routes ----------*/
 router.get('/', starshipsCtrl.index)
-router.get('/:id', starshipsCtrl.show)
 router.get('/?=', starshipsCtrl.findWithQuery)
-router.get('/?=:query', starshipCtrl.sort)
+router.get('/sort', starshipsCtrl.sort)
+router.get('/:id', starshipsCtrl.show)
 
 
 /*---------- Protected Routes ----------*/
 router.use(decodeUserFromToken)
 router.post('/', checkAuth, starshipsCtrl.create)
-router.put('/:id', checkAuth, starshipsCtrl.update)
 router.delete('/', checkAuth, starshipsCtrl.deleteMany)
+router.put('/:id', checkAuth, starshipsCtrl.update)
 router.delete('/:id', checkAuth, starshipsCtrl.deleteShip)
 
 export { router }
