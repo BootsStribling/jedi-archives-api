@@ -13,7 +13,7 @@ router.get('/', starshipsCtrl.index)
 router.use(decodeUserFromToken)
 router.post('/', checkAuth, starshipsCtrl.create)
 router.put('/:id', checkAuth, starshipsCtrl.update)
-router.patch('/:id', checkAuth, starshipsCtrl.patchOne)
+router.delete('/', checkAuth, starshipsCtrl.deleteMany)
 router.delete('/:id', checkAuth, starshipsCtrl.deleteShip)
 
 export { router }

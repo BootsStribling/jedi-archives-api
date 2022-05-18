@@ -12,6 +12,7 @@ const starshipSchema = new Schema({
     //formatted for capital letters to start words of the name
     type: String,
     default: null,
+    unique: true,
   },
   manufacturer: {
     // formatted to allow capital letters of the name of manufacturer

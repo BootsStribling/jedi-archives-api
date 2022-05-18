@@ -2,10 +2,23 @@ import { Starship } from '../models/starship.js'
 
 function index(req, res) {
   Starship.find({})
-  .then(starships => res.json(starships))
+  .then(starships => {
+    if(starships.length > 0) res.json({starships, msg: `The fleet is arriving!`})
+    if(starships.length === 0) res.json({starships, msg: `Where is everybody?`})
+  })
   .catch(err => {
     console.log(err, 'Error finding all the starships.')
-    res.status(500).json({err, msg: `ERR:Indexing Pick up your visual scanning!`})
+    res.status(500).json({err, msg: `ERR:Indexing I can't see 'em! Pick up your visual scanning!`})
+  })
+}
+
+function deleteMany(req,res){
+  console.log(req.body.name, 'req.body.name')
+  Starship.deleteMany({name: req.body.name})
+  .then(starships => res.json({starships, msg: `We've destroyed the whole fleet! Lets's get out of here!`}))
+  .catch(err => {
+    console.log(err, `Error deleting with ${req.params.query}`)
+    res.status(500).json({err, msg: `Err:Deletingw/query These aren't the droids your looking for.`})
   })
 }
 
@@ -27,11 +40,6 @@ function update(req,res){
   })
 }
 
-function patchOne(req,res){
-  Starship.findByIdAndUpdate(req.params.id, req.body, {new:true})
-  .then(starship => res.status(200).json({starship, msg: ``}))
-}
-
 function deleteShip(req,res){
   Starship.findByIdAndDelete(req.params.id)
   .then(starship => res.status(200).json({msg: `Destroyed ${starship.name}. Watch your back.`}))
@@ -45,6 +53,6 @@ export {
   index,
   create,
   update,
-  patchOne,
-  deleteShip
+  deleteShip,
+  deleteMany
 }
