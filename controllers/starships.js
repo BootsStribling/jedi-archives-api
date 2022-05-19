@@ -1,6 +1,13 @@
 import { Starship } from '../models/starship.js'
 
+const ips = new Map()
+
 function index(req, res) {
+  if(ips.has(req.ip)){
+    ips[req.ip] += 1
+  }else{
+    ips[req.ip] = 1
+  }
   Starship.find({})
   .then(starships => {
     if(starships.length > 0) res.json({starships, msg: `Is this what you're looking for?`})
@@ -43,8 +50,18 @@ function deleteMany(req,res){
   })
 }
 
+//SORT takes in the request body and prioritizes sort order based on priority in the request body.
+  //For example - if your body looks like this:
+    /*{
+      "length": "asc",
+      "width": "desc"
+    }
+  Sort will prioritize length sorting first and then within ships of the same length, will prioritze width sorting within the ships that have the same length
+  //
+      */
 function sort(req,res){
-  Starship.find({}).sort({length: `${req.body.length}`})
+  console.log(req.params, "req.params")
+  Starship.find(req.params.query).sort(req.body)
   .then(starships => res.json({starships, msg: `Is this how you wanted them ordered, sir?`}))
   .catch(err => {
     console.log(err, `Error sorting with query ${req.params.query}`)
@@ -89,3 +106,7 @@ export {
   deleteShip,
   deleteMany
 }
+
+
+
+console.log(ips)
