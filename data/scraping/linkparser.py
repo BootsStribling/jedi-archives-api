@@ -1,13 +1,11 @@
 from bs4 import BeautifulSoup
-from htmlgen import htmlgen
-
 import requests
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup as bs
 
 def get_list():
   list_url = 'https://starwars.fandom.com/wiki/Category:starships'
   res = requests.get(list_url)
-  soup = BeautifulSoup(res.content, 'lxml')
+  soup = bs(res.content, 'lxml')
 
   array = soup.find_all("a", class_="category-page__member-link")
 
@@ -20,30 +18,52 @@ def get_list():
   return links
 
 
-def get_html():
-  links = [{'name': 'Ravenstar', 'href': '/wiki/Ravenstar'}]
+def get_data():
+  links = [{'name': 'The Rolling Gales', 'href': '/wiki/The_Rolling_Gales'}]
   # links = get_list()
 
   for link in links:
     href = link['href']
     page_url = f'https://starwars.fandom.com{href}'
     res = requests.get(page_url)
-    soup = BeautifulSoup(res.content, 'lxml')
+    soup = bs(res.content, 'lxml')
+    set_data(soup)
     
+    
+def set_data(soup):
+    # beginning the data construction
     data={}
+    # setting image url on data
     data['image'] = soup.find('aside', class_='portable-infobox').find('img').get('src')
-    label_length = len(soup.find_all('h3', class_='pi-data-label'))
-    for i in range(label_length):
-      label_parent = soup.find('aside', class_='portable-infobox').find('h3', class_='pi-data-label')
-      label = soup.find('aside', class_='portable-infobox').find('div').find('a').string
-      for j in 
-      label_parent.decompose()
+    rows = soup.find('aside', class_='portable-infobox').find_all('div', class_='pi-data')
+    row_length = len(rows)
+    for row in rows:
+      print(type(rows[row]))
       
-      print(parent.decomposed, '<-if the parent was destroyed')
-
-
-
-    print('data', data)
+    #   label = bs(rows[row], 'lxml').find('h3', class_='pi-data-label').string
+    #   print(label)
+    #   # print('row', rows[row])
+    #   print('<---------------------------------------------->')
+      # row_soup = bs(row, 'lxml')
+      # print(row_soup)
     
+    
+      # parent = soup.find('div', class_='pi-data')
+      # label = soup.find('aside', class_ ='portable-infobox').find('h3', class_='pi-data-label').get_text(strip=True)
+      # value_length = len(soup.find_all('div', class_='pi-data-value'))
+      # label = label.replace(')','').replace('(','').replace(' ', '-').lower()
+      # data[label] = []
+      # values = soup.find('div', class_='pi-data-value').find_all('a')
+      #   data[label] = value
 
-get_html()
+        
+      #   value = soup.find('aside', class_='portable-infobox').find('div').find('a').string
+      # parent.decompose()
+      
+      # print(parent.decomposed, '<-if the parent was destroyed')
+
+
+
+    print('data', data)    
+
+get_data()
