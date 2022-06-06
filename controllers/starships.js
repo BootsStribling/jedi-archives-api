@@ -11,7 +11,7 @@ function index(req, res) {
   Starship.find({})
   .then(starships => {
     if(starships.length > 0) res.json({starships, msg: `Is this what you're looking for?`})
-    if(starships.length === 0) res.json({starships, msg: `Nothing found.`})
+    if(starships.length === 0) res.json({starships, msg: `No starships`})
   })
   .catch(err => {
     console.log(err, 'Error finding all the starships.')
@@ -23,13 +23,14 @@ function findWithQuery(req,res){
   Starship.find(req.body)
   .then(starships => {
     if(starships.length > 0) res.json({starships, msg: `The fleet is arriving!`})
-    if(starships.length === 0) res.json({starships, msg: `Where is everybody?`})
+    if(starships.length === 0) res.json({msg: `No starships match your query. Adjust your query.`})
   })
   .catch(err => {
     console.log(err, `Error finding with Queries ${req.body}`)
     res.status(500).json({err, msg: `ERR:Querying \n He can go about his business. ${req.body} queries didn't return anything or are improperly formatted as a object.`})
   })
 }
+
 
 function show(req,res){
   Starship.findById(req.params.id)

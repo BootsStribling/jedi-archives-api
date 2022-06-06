@@ -7,7 +7,7 @@ const router = Router()
 
 /*---------- Public Routes ----------*/
 router.get('/', starshipsCtrl.index)
-router.get('/?=', starshipsCtrl.findWithQuery)
+router.get('/?', starshipsCtrl.findWithQuery)
 router.get('/sort', starshipsCtrl.sort)
 router.get('/:id', starshipsCtrl.show)
 
