@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import re
 from bs4 import BeautifulSoup as bs
 
 def get_list(url):
@@ -18,7 +19,7 @@ def get_list(url):
   return links
 
 
-def get_data(url):
+def get_data():
   links = [{'name': 'The Rolling Gales', 'href': '/wiki/The_Rolling_Gales'}]
   # links = get_list(url)
 
@@ -31,39 +32,48 @@ def get_data(url):
     
     
 def set_data(soup):
-    # beginning the data construction
-    data={}
-    # setting image url on data
-    data['image'] = soup.find('aside', class_='portable-infobox').find('img').get('src')
-    rows = soup.find('aside', class_='portable-infobox').find_all('div', class_='pi-data')
-    row_length = len(rows)
-    for row in rows:
-      print(type(rows[row].Tag))
-      
-    #   label = bs(rows[row], 'lxml').find('h3', class_='pi-data-label').string
-    #   print(label)
-    #   # print('row', rows[row])
-    #   print('<---------------------------------------------->')
-      # row_soup = bs(row, 'lxml')
-      # print(row_soup)
-    
-    
-      # parent = soup.find('div', class_='pi-data')
-      # label = soup.find('aside', class_ ='portable-infobox').find('h3', class_='pi-data-label').get_text(strip=True)
-      # value_length = len(soup.find_all('div', class_='pi-data-value'))
-      # label = label.replace(')','').replace('(','').replace(' ', '-').lower()
-      # data[label] = []
-      # values = soup.find('div', class_='pi-data-value').find_all('a')
-      #   data[label] = value
+  # beginning the data construction
+  data={}
+  # image
+  data['image'] = soup.find('aside', class_='portable-infobox').find('img').get('src')
+  
+  # name
+  data['name'] = soup.find('h1', class_='page-header__title').find('i').text
+  
+  # description
+  d_elements = soup.find('div', class_='mw-parser-output').find_all('p')
+  data['description'] = []
+  for element in d_elements:
+    data['description'].append(element.text.strip().replace('\n', '').replace('[1]', '').replace('[2]', ''))
+  data['description'].pop(0)
+  data['description'].pop(0)
+  data['description'].pop(0)
+  n = len(data['description'])
+  data['description'][0:n] = [''.join(data['description'][0:n])]
+  print(data['description'])
 
-        
-      #   value = soup.find('aside', class_='portable-infobox').find('div').find('a').string
-      # parent.decompose()
-      
-      # print(parent.decomposed, '<-if the parent was destroyed')
+  # infobox
+  rows = soup.find('aside', class_='portable-infobox').find_all('div', class_='pi-data')
+  for row in rows:
+    label = row.find('h3', class_='pi-data-label').text.replace(' ', '-').replace('(s)', 's').lower()
+    data[label] = []
+    elements_a = row.find('div', class_='pi-data-value').find_all('a')
+    values_a = []
+    if(values_a):
+      for value in elements_a:
+        if(value.text != '[1]'):
+          values_a.append(value.text)
+          data[label].append(value.text)
+    else:
+      element_nonlink_text = row.find_all('div', class_='pi-data-value')
+      for value in element_nonlink_text:
+        if(value.text != '[1]'):
+          data[label].append(value.text.replace('[1]', ' ').strip())
+  
+  print(data)
 
-
-
-    print('data', data)    
+def clear_duplicates(data_object):
+  for item in data_object:
+    print(item, data_object[item])
 
 get_data()
