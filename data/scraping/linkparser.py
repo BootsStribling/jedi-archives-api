@@ -2,8 +2,8 @@ from bs4 import BeautifulSoup
 import requests
 from bs4 import BeautifulSoup as bs
 
-def get_list():
-  list_url = 'https://starwars.fandom.com/wiki/Category:starships'
+def get_list(url):
+  list_url = url
   res = requests.get(list_url)
   soup = bs(res.content, 'lxml')
 
@@ -18,9 +18,9 @@ def get_list():
   return links
 
 
-def get_data():
+def get_data(url):
   links = [{'name': 'The Rolling Gales', 'href': '/wiki/The_Rolling_Gales'}]
-  # links = get_list()
+  # links = get_list(url)
 
   for link in links:
     href = link['href']
@@ -38,7 +38,7 @@ def set_data(soup):
     rows = soup.find('aside', class_='portable-infobox').find_all('div', class_='pi-data')
     row_length = len(rows)
     for row in rows:
-      print(type(rows[row]))
+      print(type(rows[row].Tag))
       
     #   label = bs(rows[row], 'lxml').find('h3', class_='pi-data-label').string
     #   print(label)
