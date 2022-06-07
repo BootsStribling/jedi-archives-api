@@ -7,7 +7,7 @@ BASE_URL = 'https://starwars.fandom.com'
 categories = ['/wiki/Category:Starships', 'https' ]
 
 #*#*#*#*#*#*#*#*#*# ASSEMBLES ALL UNIQUE CATEGORY PAGES #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
-def get_category():
+# def get_category():
   
 
 
