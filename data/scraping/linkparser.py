@@ -4,41 +4,61 @@ import requests
 import re
 
 BASE_URL = 'https://starwars.fandom.com'
-categories = ['/wiki/Category:Starships', 'https' ]
+starship_category_list = '/wiki/Special:Categories?from=Starships'
 
 #*#*#*#*#*#*#*#*#*# ASSEMBLES ALL UNIQUE CATEGORY PAGES #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
-# def get_category():
-  
+def get_categories(url_extension):
+  category_url  = f'{BASE_URL}{url_extension}'
+  res = requests.get(category_url)
+  soup = bs(res.content, 'lxml')
+  raw_category_list = soup.find('div', class_='mw-spcontent').find('ul').find_all('a')
+  filtered_category_list = []
+  for category in raw_category_list:
+    if 'Starships' in category.text:
+      filtered_category_list.append(category)
+  refined_category_list = []
+  for category in filtered_category_list:
+    link = {}
+    link['name'] = category.text
+    link['href'] = category.get('href')
+    refined_category_list.append(link)
+  print(refined_category_list)
+  return refined_category_list
 
 
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#* Calls 
 
+get_categories(starship_category_list)
+
+
+# find('div', class_='page').find('main', class_='page__main').find('div', class_='page-content').find('div', class_='mw-body-content')
 #*#*#*#*#**##*#* GETS LIST OF URLS FROM WOOKIEEPEDIA CATEGORY PAGE *#*#*#*#*#*#*#*#*#*#*
-def get_list(categories):
-  for url in categories:
-    list_url = f'{BASE_URL}{url}'
-    res = requests.get(list_url)
-    soup = bs(res.content, 'lxml')
-    array = soup.find_all("a", class_="category-page__member-link")
+# def get_list(categories):
+#   for url in categories:
+#     list_url = f'{BASE_URL}{url}'
+#     res = requests.get(list_url)
+#     soup = bs(res.content, 'lxml')
+#     array = soup.find_all("a", class_="category-page__member-link")
 
-    links = []
-    for element in array:
-        link = {}
-        name = element.get_text()
-        if('Category' in name or 'Starship' in name):
-          pass
-        else:
-          link['name'] = element.get_text()
-          link['href'] = element.get('href')
-          links.append(link)
-    urls = pd.Series(links)
-    ######################TESTING ONLY - To make sure you are getting all of the URLS- Comment out When finished Testing###################
-    for url in urls:
-      name = url['name']
-      href = url['href']
-      print(f'The name is {name} and the link is {href}')
-    return urls
+#     links = []
+#     for element in array:
+#         link = {}
+#         name = element.get_text()
+#         if('Category' in name or 'Starship' in name):
+#           pass
+#         else:
+#           link['name'] = element.get_text()
+#           link['href'] = element.get('href')
+#           links.append(link)
+#     urls = pd.Series(links)
+#     ######################TESTING ONLY - To make sure you are getting all of the URLS- Comment out When finished Testing###################
+#     for url in urls:
+#       name = url['name']
+#       href = url['href']
+#       print(f'The name is {name} and the link is {href}')
+#     return urls
   
-get_list()
+# get_list()
 
 
 #*#*#*#*#*#*#*#*#*#*##*# REQUESTS HTML AND RETURNS SOUP TREE #*#*#*#*#*#*#*#*#*#*#*
@@ -54,9 +74,11 @@ get_list()
 
 
 #*#*#*#*#*#*#*#*#*#*#*# CREATES DATA OBJECT SERIES USING PANDAS BASED ON MongoDB MODEL #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*
-def create_data(soup):
-  data = pd.Series()
+# def create_data(soup):
+#   data = pd.Series()
+#   print(data)
 
+# create_data()
 #   for link in links:
 #     href = link['href']
 #     page_url = f'https://starwars.fandom.com{href}'
