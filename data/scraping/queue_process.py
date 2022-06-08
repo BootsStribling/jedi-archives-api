@@ -6,55 +6,70 @@ import random
 import time
 import requests
 import re
-from html_grab import {BASE_URL, create_HTML } 
+import os
+# from parse_html import parse_html
 
 BASE_URL = 'https://starwars.fandom.com'
 start_href = '/wiki/Special:AllPages?from=%2224-karat%22+beaches'
 pages = []
 
-####################################################################################
-##QUEUES
+#*#*#*#*#*#*#*#*#*#*#*Imports All Files in ../{Parent}/{Sub} Directory #**#*#*#*#*#*#*#*#*#*#*#*#*
+def get_filelist(parent, sub):
+  file_list = os.listdir(f'../{parent}/{sub}')
+  # print(file_list)
+  return file_list
 
-async def worker(name, queue):
+#*#*#*#*#*#*#*#*#*#**#*ADDS A 1 TO FILE NAME TEST ONLY #*#**#**#*#*#**#*#**#**
+async def add1_2file(file_name, parent, sub, new_parent, new_sub):
+  os.rename(f'../{parent}/{sub}/{file_name}', f'../{new_parent}/{new_sub}/1{file_name}')
+
+#*#*#*#*#*#*#*#*#*#**#*SUBTRACTS 1 FROM FILE NAME TEST ONLY #*#**#**#*#*#**#*#**#**
+
+async def remove1_fromfile(file_name, parent, sub, new_parent, new_sub):
+  os.rename(f'../{parent}/{sub}/{file_name}', f'../{new_parent}/{new_sub}/1{file_name}'.replace('1', ''))
+####################################################################################
+##SET UP CLEANER QUEUE
+
+
+async def worker(name, queue, cb):
   while True:
     # Get a "work item" out of the queue.
-    html_create = await queue.get()
+    file_name = await queue.get()
     # Sleep for the "sleep_for" seconds.
-    await asyncio.sleep(html_create)
+    await remove1_fromfile(file_name, 'parsed', 'starships', 'raw', 'starships')So
+    print(f'Completed {file_name}')
     #  Notify the queue that the "work item" has been processed.
     queue.task_done()
 
-    print(f'')
 
 async def main():
-  # Create a queue that we will use to store our "workload".
+#   # Create a queue that we will use to store our "workload".
   html_queue = asyncio.Queue()
 
-
-
-  for _ in range(20):
-
-    html_queue.put_nowait(html_create)
-
-  # Create three worker tasks to process the queue concurrently.
+  #pull file list and add the file list to the queue
+  file_list = get_filelist('parsed', 'starships')
+  for file in file_list:
+    html_queue.put_nowait(file)
+  
+    
+#   # Create three worker tasks to process the queue concurrently.
   tasks = []
-  for i in range(3):
+  for i in range(5):
     task = asyncio.create_task(worker(f'worker-{i}', html_queue))
     tasks.append(task)
 
-  # Wait until the queue is fully processed.
+#   # Wait until the queue is fully processed.
+  # await html_queue.join()
 
-  await html_queue.join()
+#   # Cancel our worker tasks.
+#   for task in tasks:
+#     task.cancel()
+#   # Wait until all worker tasks are cancelled.
+#   await asyncio.gather(*tasks, return_exceptions=True)
 
-  # Cancel our worker tasks.
-  for task in tasks:
-    task.cancel()
-  # Wait until all worker tasks are cancelled.
-  await asyncio.gather(*tasks, return_exceptions=True)
-
-  print('====')
-  print(f'')
-  print(f'')
+#   print('====')
+#   print(f'')
+#   print(f'')
 
 asyncio.run(main())
 
