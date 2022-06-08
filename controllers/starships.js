@@ -1,10 +1,17 @@
 import { Starship } from '../models/starship.js'
 
+const ips = new Map()
+
 function index(req, res) {
+  if(ips.has(req.ip)){
+    ips[req.ip] += 1
+  }else{
+    ips[req.ip] = 1
+  }
   Starship.find({})
   .then(starships => {
     if(starships.length > 0) res.json({starships, msg: `Is this what you're looking for?`})
-    if(starships.length === 0) res.json({starships, msg: `Nothing found.`})
+    if(starships.length === 0) res.json({starships, msg: `No starships`})
   })
   .catch(err => {
     console.log(err, 'Error finding all the starships.')
@@ -16,13 +23,14 @@ function findWithQuery(req,res){
   Starship.find(req.body)
   .then(starships => {
     if(starships.length > 0) res.json({starships, msg: `The fleet is arriving!`})
-    if(starships.length === 0) res.json({starships, msg: `Where is everybody?`})
+    if(starships.length === 0) res.json({msg: `No starships match your query. Adjust your query.`})
   })
   .catch(err => {
     console.log(err, `Error finding with Queries ${req.body}`)
     res.status(500).json({err, msg: `ERR:Querying \n He can go about his business. ${req.body} queries didn't return anything or are improperly formatted as a object.`})
   })
 }
+
 
 function show(req,res){
   Starship.findById(req.params.id)
@@ -43,8 +51,18 @@ function deleteMany(req,res){
   })
 }
 
+//SORT takes in the request body and prioritizes sort order based on priority in the request body.
+  //For example - if your body looks like this:
+    /*{
+      "length": "asc",
+      "width": "desc"
+    }
+  Sort will prioritize length sorting first and then within ships of the same length, will prioritze width sorting within the ships that have the same length
+  //
+      */
 function sort(req,res){
-  Starship.find({}).sort({length: `${req.body.length}`})
+  console.log(req.params, "req.params")
+  Starship.find(req.params.query).sort(req.body)
   .then(starships => res.json({starships, msg: `Is this how you wanted them ordered, sir?`}))
   .catch(err => {
     console.log(err, `Error sorting with query ${req.params.query}`)
@@ -89,3 +107,7 @@ export {
   deleteShip,
   deleteMany
 }
+
+
+
+console.log(ips)
