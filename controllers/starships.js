@@ -1,4 +1,4 @@
-import { Starship } from '../models/starship.js'
+import { Starship } from '../models/starships/individualStarship.js'
 
 const ips = new Map()
 
