@@ -22,16 +22,31 @@ def get_filelist(parent, sub):
 
 
 
-#*#*#*#*#*#*#*#*#*#**#*ADDS A 1 TO FILE NAME TEST ONLY #*#**#**#*#*#**#*#**#**
-async def add1_2file(file_name, parent, sub, new_parent, new_sub):
-  os.rename(f'../{parent}/{sub}/{file_name}', f'../{new_parent}/{new_sub}/1{file_name}')
+# #*#*#*#*#*#*#*#*#*#**#*ADDS A 1 TO FILE NAME TEST ONLY #*#**#**#*#*#**#*#**#**
+# async def add1_2file(file_name, parent, sub, new_parent, new_sub):
+#   os.rename(f'../{parent}/{sub}/{file_name}', f'../{new_parent}/{new_sub}/1{file_name}')
 
-#*#*#*#*#*#*#*#*#*#**#*SUBTRACTS 1 FROM FILE NAME TEST ONLY #*#**#**#*#*#**#*#**#**
+# #*#*#*#*#*#*#*#*#*#**#*SUBTRACTS 1 FROM FILE NAME TEST ONLY #*#**#**#*#*#**#*#**#**
 
-async def remove1_fromfile(file_name, parent, sub, new_parent, new_sub):
-  os.rename(f'../{parent}/{sub}/{file_name}', f'../{new_parent}/{new_sub}/1{file_name}'.replace('1', ''))
-####################################################################################
-##SET UP CLEANER QUEUE
+# async def remove1_fromfile(file_name, parent, sub, new_parent, new_sub):
+#   os.rename(f'../{parent}/{sub}/{file_name}', f'../{new_parent}/{new_sub}/1{file_name}'.replace('1', ''))
+
+#*#*#*#*#*##*#*#* CHECKING HTML IN LIST FOR STARSHIP CATEGORY #*#*#*#*#*#*#*#*#*#*#*
+html = open('../raw/test/Millenium_Falcon.html', 'r')
+def check_starship(html):
+  soup = bs(html, 'lxml')
+  categories = soup.find('div', class_='page-header__categories').find_all('a')
+  print('*'*100)
+  for category in categories:
+    if 'starship' in category.text:
+      return True 
+    else: 
+      return False
+
+
+check_starship(html)
+#*################## STARSHIP FILTER QUEUE #################################################################
+
 
 
 async def worker(name, queue):
@@ -39,7 +54,7 @@ async def worker(name, queue):
     # Get a "work item" out of the queue.
     file_name = await queue.get()
     # Sleep for the "sleep_for" seconds.
-    await remove1_fromfile(file_name, 'parsed', 'starships', 'raw', 'starships')
+    await remove1_fromfile(file_name, 'raw', 'a-z', 'raw', 'starships')
     await asyncio.sleep(.0001)
     await print(f'{name}- completed {file_name}')
     #  Notify the queue that the "work item" has been processed.
