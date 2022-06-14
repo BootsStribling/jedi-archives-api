@@ -16,8 +16,11 @@ pages = []
 #*#*#*#*#*#*#*#*#*#*#*Imports All Files in ../{Parent}/{Sub} Directory #**#*#*#*#*#*#*#*#*#*#*#*#*
 def get_filelist(parent, sub):
   file_list = os.listdir(f'../{parent}/{sub}')
-  # print(file_list)
+  print(file_list)
+  print(len(file_list))
   return file_list
+
+
 
 #*#*#*#*#*#*#*#*#*#**#*ADDS A 1 TO FILE NAME TEST ONLY #*#**#**#*#*#**#*#**#**
 async def add1_2file(file_name, parent, sub, new_parent, new_sub):
@@ -31,13 +34,14 @@ async def remove1_fromfile(file_name, parent, sub, new_parent, new_sub):
 ##SET UP CLEANER QUEUE
 
 
-async def worker(name, queue, cb):
+async def worker(name, queue):
   while True:
     # Get a "work item" out of the queue.
     file_name = await queue.get()
     # Sleep for the "sleep_for" seconds.
-    await remove1_fromfile(file_name, 'parsed', 'starships', 'raw', 'starships')So
-    print(f'Completed {file_name}')
+    await remove1_fromfile(file_name, 'parsed', 'starships', 'raw', 'starships')
+    await asyncio.sleep(.0001)
+    await print(f'{name}- completed {file_name}')
     #  Notify the queue that the "work item" has been processed.
     queue.task_done()
 
@@ -54,7 +58,7 @@ async def main():
     
 #   # Create three worker tasks to process the queue concurrently.
   tasks = []
-  for i in range(5):
+  for i in range(50):
     task = asyncio.create_task(worker(f'worker-{i}', html_queue))
     tasks.append(task)
 
@@ -71,7 +75,7 @@ async def main():
 #   print(f'')
 #   print(f'')
 
-asyncio.run(main())
+# asyncio.run(main())
 
 ####################################################################################
 ####################################################################################

@@ -103,3 +103,68 @@
 # print(ship.image)
 # ship.image = 'special test'
 # print(ship.image)
+import asyncio
+from bs4 import BeautifulSoup as bs
+import re
+import requests
+import time
+import os
+
+BASE_URL = 'https://starwars.fandom.com'
+links = [] #for each of the list pagination links
+pages = [] # for each of the links on the list pages- the links to all wookieepedia pages themselves
+
+#*#*#*#*#*#*#*#*#* GETS ALL A TAG PAGE LINKS IN LIST PAGE
+  
+def get_pages(a_tags):
+  for a in a_tags:
+    page = {}
+    page['name'] = a.text
+    page['href'] = a.get('href')
+    pages.append(page)
+
+#*#*#*#*#*#*GET NEXT PAGE FROM WOOKIEEPEDIA LIST #*#*#*#*#*#*#**#*#*#*#*#*#*
+
+def get_next_page(href):
+  url = f'{BASE_URL}{href}'
+  req = requests.get(url)
+  soup = bs(req.content, 'lxml')
+  elements = soup.find_all('a', title=re.compile('Special:AllPages'))
+  a_tags = soup.find('ul', class_='mw-allpages-chunk').find_all('a'
+  )
+  get_pages(a_tags)
+  unique = []
+  # remove duplicates
+  for element in elements:
+    if(element not in unique): unique.append(element)
+  # gets href and name
+  for element in unique:
+    link = {}
+    link['name'] = element.text
+    link['href'] = element.get('href')
+    links.append(link)
+  print(f'Next list page called {"*"*100}')
+  # get_next_page(links[-1]['href'])
+get_next_page('/wiki/Special:AllPages?from=1010+BBY')
+
+#*#*#*#*#*#*#*#* WRITE NEW HTML FOR ALL PAGE LINKS #*#*#*#*#*#*#*#*#*
+
+def write_HTML(pages):
+  print(f'{"*"* 33}Started HTML WRITING PROCESS at {time.strftime("%X")}{"*"* 33}')
+  print(f'{"*"* 100}')
+  for page in pages:
+    print(f'{"*"* 100}')
+    name = page['name'].replace(' ','-').replace('/', '-')
+    print(f'Started HTML write for {name} at {time.strftime("%X")}')
+    url = page['href']
+    page_url = f'{BASE_URL}{url}'
+    res = requests.get(page_url)
+    soup = bs(res.content, 'lxml')
+    message = f'{soup}'
+    f = open(f'../raw/a-z/{name}.html', 'w')
+    f.write(message)
+    f.close()
+    print(f'Completed HTML write for {name} at {time.strftime("%X")}')
+    print(f'{"*"* 100}')
+
+write_HTML(pages)
