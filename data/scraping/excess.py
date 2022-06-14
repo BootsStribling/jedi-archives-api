@@ -113,7 +113,7 @@ import os
 BASE_URL = 'https://starwars.fandom.com'
 links = [] #for each of the list pagination links
 pages = [] # for each of the links on the list pages- the links to all wookieepedia pages themselves
-
+count = 0
 #*#*#*#*#*#*#*#*#* GETS ALL A TAG PAGE LINKS IN LIST PAGE
   
 def get_pages(a_tags):
@@ -125,7 +125,7 @@ def get_pages(a_tags):
 
 #*#*#*#*#*#*GET NEXT PAGE FROM WOOKIEEPEDIA LIST #*#*#*#*#*#*#**#*#*#*#*#*#*
 
-def get_next_page(href):
+def get_next_page(href, count):
   url = f'{BASE_URL}{href}'
   req = requests.get(url)
   soup = bs(req.content, 'lxml')
@@ -143,9 +143,14 @@ def get_next_page(href):
     link['name'] = element.text
     link['href'] = element.get('href')
     links.append(link)
-  print(f'Next list page called {"*"*100}')
-  # get_next_page(links[-1]['href'])
-get_next_page('/wiki/Special:AllPages?from=1010+BBY')
+  count += 1
+  print(f'List page {count} called \n{"*"*100}')
+  if(links[-1]['href'] == href):
+    return
+  else:
+    if(count <= 900):
+      get_next_page(links[-1]['href'], count)
+get_next_page('/wiki/Special:AllPages?from=1010+BBY', count)
 
 #*#*#*#*#*#*#*#* WRITE NEW HTML FOR ALL PAGE LINKS #*#*#*#*#*#*#*#*#*
 
