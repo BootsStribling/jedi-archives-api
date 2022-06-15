@@ -150,11 +150,11 @@ def get_next_page(href, count):
   else:
     if(count <= 900):
       get_next_page(links[-1]['href'], count)
-get_next_page('/wiki/Special:AllPages?from=1010+BBY', count)
 
 #*#*#*#*#*#*#*#* WRITE NEW HTML FOR ALL PAGE LINKS #*#*#*#*#*#*#*#*#*
 
 def write_HTML(pages):
+  get_next_page('/wiki/Special:AllPages?from=1010+BBY', count)
   print(f'{"*"* 33}Started HTML WRITING PROCESS at {time.strftime("%X")}{"*"* 33}')
   print(f'{"*"* 100}')
   for page in pages:
