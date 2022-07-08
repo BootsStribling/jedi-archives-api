@@ -9,7 +9,8 @@ const profileSchema = new Schema({
     lowercase: true, 
     unique: true},
   name: String,
-  role: {type: Number, 
+  role: {
+    type: Number, 
     required: true, 
     default: 100, 
   },
